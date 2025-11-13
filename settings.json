@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if git log -1 --pretty=%B 2>/dev/null | grep -q \"Co-Authored-By: Claude\\|Generated with.*Claude Code\"; then git commit --amend -m \"$(git log -1 --pretty=%B | grep -v \"Co-Authored-By: Claude\" | grep -v \"Generated with.*Claude Code\" | grep -v \"^🤖\" | sed \"/^$/d\")\"; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}
