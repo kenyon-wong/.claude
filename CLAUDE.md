@@ -142,6 +142,15 @@
    "数据结构错了，应该是..."
    ```
 
+### Git Commit Requirements
+
+**CRITICAL**: When creating git commits:
+- NEVER add AI assistant signatures or footers
+- NEVER add "Generated with Claude Code" lines
+- NEVER add "Co-Authored-By: Claude" lines
+- Use clean, professional commit messages following Conventional Commits
+- Only include the commit type, scope, and description
+
 ## 工具使用
 
 ### 文档工具
@@ -156,3 +165,4 @@
 - **Non-Interactive**: All Git commands must include the `--no-pager` parameter.
 - **Scope Limitation**: Only process staged files.
 - **Format Preservation**: Maintain the existing commit format and package naming conventions.
+- **No AI Signatures**: NEVER add AI assistant signatures, "Generated with Claude Code", or "Co-Authored-By: Claude" to commit messages.
