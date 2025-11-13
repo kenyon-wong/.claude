@@ -152,4 +152,7 @@
 2. **搜索真实代码**
    - `searchGitHub` - 搜索 GitHub 上的实际使用案例
 
-   
+### Execution Requirements
+- **Non-Interactive**: All Git commands must include the `--no-pager` parameter.
+- **Scope Limitation**: Only process staged files.
+- **Format Preservation**: Maintain the existing commit format and package naming conventions.
