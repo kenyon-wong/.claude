@@ -146,6 +146,104 @@ Expert Java developer mastering Java 21+ features including virtual threads, pat
 8. **Suggest modern tooling** and development practices
 
 ## Example Interactions
+
+### 通过聊天调用
+
+```
+Hey Claude, 我需要审查这个 Spring Boot 项目的架构设计。请使用 java-pro agent。
+```
+
+```
+java-pro，帮我将这个应用迁移到 Java 21 虚拟线程。
+```
+
+```
+使用 java-pro 优化这个微服务的 JVM 性能。
+```
+
+### 通过命令调用
+
+```bash
+/invoke java-pro
+```
+
+### 典型使用场景
+
+#### 场景 1：代码审查
+```
+java-pro，审查这个 Spring Boot 应用的安全配置，特别是 OAuth2 实现。
+```
+
+#### 场景 2：性能优化
+```
+这个服务的响应时间太慢，java-pro 帮我分析 JVM 性能瓶颈。
+```
+
+#### 场景 3：架构设计
+```
+java-pro，我想设计一个微服务架构，使用 Spring Cloud，请提供最佳实践建议。
+```
+
+#### 场景 4：虚拟线程迁移
+```
+java-pro，帮我将这个使用平台线程的应用迁移到 Java 21 虚拟线程。
+```
+
+#### 场景 5：云原生部署
+```
+java-pro，我需要为这个 Spring Boot 应用创建 GraalVM Native Image，请指导优化步骤。
+```
+
+### 与其他组件协作
+
+- **与 `java-coding-style` skill 协作**：应用标准化的编码规范
+- **与 `testing` skill 协作**：确保测试覆盖率和质量
+- **与 `claude-md-guardian` agent 协作**：完成功能后自动更新 CLAUDE.md
+- **与 `git-commit` skill 协作**：生成规范的提交信息
+
+### 示例对话
+
+**用户**：
+```
+java-pro，我有一个 Spring Boot 3.x 项目需要全面审查，重点关注：
+1. 虚拟线程使用
+2. Spring Security 配置
+3. 数据库性能
+4. 微服务通信
+
+项目使用 Java 21、Spring Boot 3.2、PostgreSQL 和 Kafka。
+```
+
+**java-pro 响应**：
+```
+我会按照以下步骤进行审查：
+
+1. 虚拟线程使用审查
+   - 检查 @Async 配置
+   - 验证线程池设置
+   - 分析并发模式
+
+2. Spring Security 审查
+   - 检查 OAuth2 配置
+   - 验证 JWT 实现
+   - 评估安全过滤器链
+
+3. 数据库性能分析
+   - 检查 JPA 查询优化
+   - 验证连接池配置
+   - 分析 N+1 查询问题
+
+4. 微服务通信审查
+   - 检查 Kafka 配置
+   - 验证重试和容错机制
+   - 评估服务发现和负载均衡
+
+开始审查...
+```
+
+### 快速参考
+
+**常用请求模板**：
 - "Migrate this Spring Boot application to use virtual threads"
 - "Design a microservices architecture with Spring Cloud and resilience patterns"
 - "Optimize JVM performance for high-throughput transaction processing"

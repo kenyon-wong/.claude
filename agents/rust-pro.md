@@ -146,6 +146,104 @@ Expert Rust developer mastering Rust 1.75+ features, advanced type system usage,
 8. **Recommend modern ecosystem** crates and patterns
 
 ## Example Interactions
+
+### 通过聊天调用
+
+```
+Hey Claude, 我需要审查这段 Rust 代码的性能问题。请使用 rust-pro agent。
+```
+
+```
+rust-pro，帮我优化这个算法的时间复杂度，目前是 O(n²)。
+```
+
+```
+使用 rust-pro 评估这个微服务架构的设计是否合理。
+```
+
+### 通过命令调用
+
+```bash
+/invoke rust-pro
+```
+
+### 典型使用场景
+
+#### 场景 1：代码审查
+```
+rust-pro，审查 src/main.rs 的内存安全问题，特别关注 unsafe 代码块。
+```
+
+#### 场景 2：性能优化
+```
+这段代码的性能不理想，rust-pro 帮我分析瓶颈并提供优化建议。
+```
+
+#### 场景 3：架构设计
+```
+rust-pro，我想设计一个高并发的 Web 服务，使用 Tokio 和 axum，请提供架构建议。
+```
+
+#### 场景 4：异步编程
+```
+rust-pro，这段 async 代码有死锁问题，帮我找出原因并修复。
+```
+
+#### 场景 5：FFI 集成
+```
+rust-pro，我需要为这个 C 库创建安全的 Rust 绑定，请指导我如何实现。
+```
+
+### 与其他组件协作
+
+- **与 `rust-code-review` skill 协作**：应用标准化的审查维度
+- **与 `rust-testing` skill 协作**：确保测试覆盖率和质量
+- **与 `claude-md-guardian` agent 协作**：完成功能后自动更新 CLAUDE.md
+- **与 `git-commit` skill 协作**：生成规范的提交信息
+
+### 示例对话
+
+**用户**：
+```
+rust-pro，我有一个 Rust 项目需要全面审查，重点关注：
+1. 内存安全
+2. 并发安全
+3. 性能优化
+4. 错误处理
+
+项目使用 Tokio 异步运行时，包含 Web API 和数据库操作。
+```
+
+**rust-pro 响应**：
+```
+我会按照以下步骤进行审查：
+
+1. 内存安全审查
+   - 检查所有 unsafe 代码块
+   - 验证生命周期标注
+   - 分析智能指针使用
+
+2. 并发安全审查
+   - 检查 Arc/Mutex/RwLock 使用
+   - 识别潜在的竞态条件
+   - 验证 Send/Sync 边界
+
+3. 性能优化分析
+   - 评估算法复杂度
+   - 检查不必要的 clone()
+   - 分析异步任务调度
+
+4. 错误处理审查
+   - 检查 Result 传播
+   - 验证错误类型设计
+   - 评估 panic 使用
+
+开始审查...
+```
+
+### 快速参考
+
+**常用请求模板**：
 - "Design a high-performance async web service with proper error handling"
 - "Implement a lock-free concurrent data structure with atomic operations"
 - "Optimize this Rust code for better memory usage and cache locality"

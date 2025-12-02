@@ -8,6 +8,7 @@
 
 | Skill 目录 | 用途 | 适用范围 | 版本 |
 |-----------|------|---------|------|
+| `claude-md-enhancer/` | CLAUDE.md 文件生成与增强 | 所有项目 | v1.0.0 |
 | `rust-code-review/` | Rust 代码审查标准 | 所有 Rust 项目 | v2.0.0 |
 | `report-templates/` | 代码审查报告模板 | 所有代码审查任务 | v2.0.0 |
 | `rust-testing/` | Rust 测试验证流程 | 所有 Rust 项目 | v2.0.0 |

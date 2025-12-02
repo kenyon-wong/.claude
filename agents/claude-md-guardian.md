@@ -307,6 +307,199 @@ Changes: 6 sections modified, 45 lines changed
 ✅ CLAUDE.md fully synchronized with project state
 ```
 
+## 使用示例
+
+### 自动调用（SessionStart Hook）
+
+当配置了 SessionStart hook 时，我会在每次会话开始时自动检查：
+
+```json
+{
+  "hooks": {
+    "SessionStart": {
+      "command": "echo 'Session started - checking CLAUDE.md updates'",
+      "timeout": 5000,
+      "description": "Trigger claude-md-guardian to check for CLAUDE.md updates"
+    }
+  }
+}
+```
+
+**我的行为**：
+```
+✓ CLAUDE.md current (no significant changes detected)
+```
+
+或
+
+```
+🔄 Detected 15 files changed since last CLAUDE.md update.
+New dependencies: react-query, tailwindcss
+New directory: src/components/
+
+Updating CLAUDE.md:
+- Tech Stack section (added React Query, Tailwind CSS)
+- Project Structure (added components directory)
+- Setup & Installation (updated installation steps)
+
+✅ CLAUDE.md updated (3 sections modified)
+```
+
+### 手动调用（功能完成后）
+
+#### 通过聊天调用
+
+```
+Hey Claude, 我刚完成了用户认证功能，请调用 claude-md-guardian 更新 CLAUDE.md。
+```
+
+```
+功能开发完成，使用 claude-md-guardian 同步 CLAUDE.md 文件。
+```
+
+#### 通过命令调用
+
+```bash
+/invoke claude-md-guardian
+```
+
+或通过 enhance-claude-md 命令：
+
+```bash
+/enhance-claude-md
+```
+
+### 典型使用场景
+
+#### 场景 1：新增依赖后
+
+**用户**：
+```
+我刚添加了 tokio、serde 和 axum 依赖，请更新 CLAUDE.md。
+```
+
+**claude-md-guardian 响应**：
+```
+检测到新依赖：tokio 1.35.0, serde 1.0.193, axum 0.7.3
+
+✅ CLAUDE.md updated:
+- Tech Stack: Added 3 dependencies
+- Setup: Updated installation instructions
+
+Changes: 2 sections modified, 8 lines changed
+```
+
+#### 场景 2：重构后
+
+**用户**：
+```
+我重构了项目结构，将代码拆分为多个 crate，请同步 CLAUDE.md。
+```
+
+**claude-md-guardian 响应**：
+```
+检测到项目结构变更：
+- 新增 crates/core/
+- 新增 crates/cli/
+- 新增 crates/utils/
+
+✅ CLAUDE.md updated:
+- Project Structure: Updated diagram
+- Architecture: Added multi-crate explanation
+- Common Commands: Updated build commands
+
+Changes: 3 sections modified, 25 lines changed
+```
+
+#### 场景 3：架构变更后
+
+**用户**：
+```
+我将应用从单体架构改为微服务架构，请更新 CLAUDE.md。
+```
+
+**claude-md-guardian 响应**：
+```
+🔄 Major changes detected - Full quality check performed
+
+Updates applied:
+- Architecture: New microservices pattern documented
+- Tech Stack: 5 new dependencies added (Spring Cloud, Eureka, etc.)
+- Setup & Installation: Updated for distributed deployment
+- Common Commands: Added service-specific commands
+
+Quality Score: 75 → 88 (+13)
+Changes: 6 sections modified, 45 lines changed
+
+✅ CLAUDE.md fully synchronized with project state
+```
+
+### 与其他组件协作
+
+**与 `/enhance-claude-md` 命令协作**：
+```
+/enhance-claude-md
+↓
+Discovery → Analysis → Task
+↓
+Invokes claude-md-guardian
+↓
+CLAUDE.md updated
+```
+
+**与开发 Agents 协作**：
+```
+rust-pro 完成代码审查
+↓
+提交代码变更
+↓
+claude-md-guardian 自动检测并更新 CLAUDE.md
+```
+
+**与 Skills 协作**：
+```
+使用 claude-md-enhancer skill
+↓
+分析项目变更
+↓
+生成更新内容
+↓
+应用到 CLAUDE.md
+```
+
+### 调用时机
+
+**✅ 应该调用我的时机**：
+- 完成新功能开发
+- 添加新依赖
+- 重构项目结构
+- 修改架构设计
+- 更新配置文件
+- 每周定期同步
+
+**❌ 不应该调用我的时机**：
+- 修改单个文件的小改动
+- 只修改注释或文档
+- 正在开发中（未完成）
+- 其他 agent 正在运行
+
+### 快速参考
+
+**检查是否需要更新**：
+```
+claude-md-guardian，检查 CLAUDE.md 是否需要更新。
+```
+
+**强制更新**：
+```
+claude-md-guardian，无论是否有变更，都重新生成 CLAUDE.md。
+```
+
+**只分析不更新**：
+```
+claude-md-guardian，分析项目变更但不要修改 CLAUDE.md。
+```
+
 ---
 
 **Version**: 1.0.0
