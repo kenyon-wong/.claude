@@ -1,9 +1,9 @@
 ---
-name: testing
-description: Maven 测试策略和 JUnit 最佳实践，包括测试原则（核心功能、最小化、快速反馈）、验证次数限制（最多 2 次尝试）、测试数据要求（禁止 mock、使用真实数据）、AAA 模式、测试命名规范、@Before/@After 使用、测试覆盖率目标。适用于编写单元测试、集成测试、调试测试失败、讨论测试策略时使用。
+name: burp-plugin-testing
+description: BurpSuite Java 插件测试策略和 JUnit 最佳实践。包括测试原则（核心功能、最小化、快速反馈）、验证次数限制（最多 2 次尝试）、测试数据要求（禁止 mock、使用真实数据）、AAA 模式、测试命名规范、@Before/@After 使用、测试覆盖率目标。适用于编写单元测试、集成测试、调试测试失败、讨论测试策略时使用。
 ---
 
-# 测试策略
+# BurpSuite 插件测试策略
 
 ## 测试原则
 
@@ -37,31 +37,38 @@ description: Maven 测试策略和 JUnit 最佳实践，包括测试原则（核
 ## 测试目录结构
 
 ```
-extender/
+burp-plugin/
 └── src/
     ├── main/
     │   └── java/
     │       └── burp/
-    │           └── onescan/
+    │           ├── common/
+    │           │   └── utils/
+    │           │       └── StringUtils.java
+    │           └── {plugin}/
                     ├── manager/
-                    │   └── FpManager.java
+                    │   └── ConfigManager.java
                     └── ui/
-                        └── widget/
-                            └── FpTestWindow.java
+                        └── tab/
+                            └── MainTab.java
     └── test/
         └── java/
             └── burp/
-                └── onescan/
+                ├── common/
+                │   └── utils/
+                │       └── StringUtilsTest.java
+                └── {plugin}/
                     ├── manager/
-                    │   └── FpManagerTest.java
+                    │   └── ConfigManagerTest.java
                     └── ui/
-                        └── widget/
-                            └── FpTestWindowTest.java
+                        └── tab/
+                            └── MainTabTest.java
 ```
 
 **命名规范**：
 - 测试类名：`{ClassName}Test.java`
 - 测试方法名：`test{MethodName}_{Scenario}`
+- 测试包结构：与源码包结构一致
 
 ## 单元测试
 
@@ -82,49 +89,46 @@ extender/
 
 **配置管理测试**：
 ```java
-public class FpManagerTest {
+public class ConfigManagerTest {
     
     @Test
-    public void testLoadConfig_ValidJson_Success() {
+    public void testLoadConfig_ValidYaml_Success() {
         // Arrange
-        String configPath = "src/test/resources/fp_config_valid.json";
+        String configPath = "src/test/resources/config_valid.yaml";
         
         // Act
-        FpManager.init(configPath);
+        ConfigManager.init(configPath);
         
         // Assert
-        assertTrue(FpManager.getCount() > 0);
-        assertNotNull(FpManager.getColumns());
+        assertNotNull(ConfigManager.getConfig());
+        assertTrue(ConfigManager.isEnabled());
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testLoadConfig_InvalidJson_ThrowsException() {
+    public void testLoadConfig_InvalidYaml_ThrowsException() {
         // Arrange
-        String configPath = "src/test/resources/fp_config_invalid.json";
+        String configPath = "src/test/resources/config_invalid.yaml";
         
         // Act
-        FpManager.init(configPath);
+        ConfigManager.init(configPath);
         
         // Assert - 期望抛出异常
     }
     
     @Test
-    public void testCheck_MatchingRule_ReturnsResult() {
+    public void testSaveConfig_ValidConfig_Success() {
         // Arrange
-        FpManager.init("src/test/resources/fp_config.yaml");
-        String request = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n";
-        String response = "HTTP/1.1 200 OK\r\n\r\n{\"swagger\":\"2.0\"}";
+        Config config = new Config();
+        config.setEnabled(true);
+        config.setThreadCount(10);
         
         // Act
-        List<FpData> results = FpManager.check(
-            request.getBytes(), 
-            response.getBytes(), 
-            false
-        );
+        ConfigManager.saveConfig(config);
+        Config loaded = ConfigManager.loadConfig();
         
         // Assert
-        assertFalse(results.isEmpty());
-        assertEquals("Swagger-UI", results.get(0).getParams().get(0).getV());
+        assertEquals(config.isEnabled(), loaded.isEnabled());
+        assertEquals(config.getThreadCount(), loaded.getThreadCount());
     }
 }
 ```
@@ -157,29 +161,40 @@ public class StringUtilsTest {
 集成测试验证多个组件协同工作：
 
 ```java
-public class FpIntegrationTest {
+public class PluginIntegrationTest {
     
     @Test
-    public void testFingerprintRecognition_EndToEnd() {
+    public void testHttpProcessing_EndToEnd() {
         // 1. 初始化配置
-        FpManager.init("src/test/resources/fp_config.yaml");
+        ConfigManager.init("src/test/resources/config.yaml");
         
         // 2. 准备测试数据
-        byte[] request = loadTestRequest("swagger-request.txt");
-        byte[] response = loadTestResponse("swagger-response.txt");
+        byte[] request = loadTestRequest("test-request.txt");
+        byte[] response = loadTestResponse("test-response.txt");
         
-        // 3. 执行指纹识别
-        List<FpData> results = FpManager.check(request, response, false);
+        // 3. 执行处理
+        HttpHandler handler = new MyHttpHandler();
+        RequestToBeSentAction action = handler.handleHttpRequestToBeSent(
+            createMockRequest(request)
+        );
         
         // 4. 验证结果
-        assertFalse(results.isEmpty());
-        assertTrue(containsFingerprint(results, "Swagger-UI"));
+        assertNotNull(action);
+        assertTrue(action.action() == Action.CONTINUE);
     }
     
     private byte[] loadTestRequest(String filename) {
         // 从测试资源加载
         return FileUtils.readFileToByteArray(
             new File("src/test/resources/requests/" + filename)
+        );
+    }
+    
+    private HttpRequestToBeSent createMockRequest(byte[] data) {
+        // 创建模拟请求对象
+        return HttpRequestToBeSent.httpRequestToBeSent(
+            HttpService.httpService("example.com", 443, true),
+            ByteArray.byteArray(data)
         );
     }
 }
@@ -191,13 +206,16 @@ public class FpIntegrationTest {
 
 ```
 src/test/resources/
-├── fp_config.yaml              # 测试用指纹配置
-├── fp_config_invalid.json      # 无效配置（用于异常测试）
+├── config.yaml                 # 测试用配置
+├── config_invalid.yaml         # 无效配置（用于异常测试）
+├── rules/
+│   ├── test_rules.yaml         # 测试规则
+│   └── invalid_rules.yaml      # 无效规则
 ├── requests/
-│   ├── swagger-request.txt     # 测试请求样本
+│   ├── test-request.txt        # 测试请求样本
 │   └── normal-request.txt
 └── responses/
-    ├── swagger-response.txt    # 测试响应样本
+    ├── test-response.txt       # 测试响应样本
     └── normal-response.txt
 ```
 
