@@ -1,23 +1,28 @@
 # Claude 最佳实践审查报告
 
-**审查时间**：2025-12-02
-**审查范围**：整个 .claude 项目
-**参考标准**：https://platform.claude.com/docs/ 和 Anthropic 官方最佳实践
+**审查日期**：2025-12-02  
+**审查范围**：整个 .claude 项目  
+**审查标准**：Claude 开发者文档最佳实践（https://docs.anthropic.com/）
 
 ---
 
 ## 📋 执行摘要
 
-本次审查基于 Claude 开发者文档的最佳实践，对当前项目的所有配置文件、Skills、Agents、Commands 和 Hooks 进行了全面检查。
+### 总体评分：⭐⭐⭐⭐☆ (4/5)
 
-**总体评分**：78/100
+**优点**：
+- ✅ 所有 Skills 和 Agents 都使用了 YAML front matter
+- ✅ 文件结构清晰，模块化设计良好
+- ✅ 包含丰富的 Skills（20+）和专用 Agents
+- ✅ 遵循渐进式披露原则（主文件 + 补充文件）
+- ✅ 文档质量高，注释详细
 
-**主要发现**：
-- ✅ 优点：Skills 结构符合官方规范，使用了 YAML front matter
-- ✅ 优点：CLAUDE.md 文件内容丰富，包含详细的角色定义
-- ⚠️ 问题：部分文件不符合官方最佳实践
-- ⚠️ 问题：缺少一些推荐的标准章节
-- ⚠️ 问题：文件组织结构可以优化
+**需要改进**：
+- ⚠️ CLAUDE.md 缺少关键章节（项目结构、安装说明、常用命令）
+- ⚠️ README.md 内容过于简单，缺少项目介绍
+- ⚠️ 部分 Skills 的 description 过长（超过 200 字符）
+- ⚠️ 缺少统一的版本管理和变更日志
+- ⚠️ 部分文件命名不一致
 
 ---
 
@@ -25,380 +30,445 @@
 
 ### 1. CLAUDE.md 文件审查
 
-**当前状态**：
-- ✅ 文件存在
-- ✅ 包含角色定义和核心哲学
-- ✅ 包含工具使用说明
-- ✅ 包含 Git Commit 要求
+#### ❌ 缺少必要章节
 
-**问题与建议**：
+根据 Claude 最佳实践，CLAUDE.md 应包含以下章节：
 
-#### 🔴 严重问题
+**缺少的章节**：
+1. **项目结构图**（Project Structure）
+2. **安装与设置**（Setup & Installation）
+3. **常用命令**（Common Commands）
+4. **技术栈**（Tech Stack）
 
-1. **缺少项目结构图**
-   - **问题**：根据官方最佳实践，CLAUDE.md 应包含项目结构的 ASCII 树状图
-   - **影响**：Claude 无法快速了解项目结构
-   - **建议**：添加 "Project Structure" 章节，包含目录树
-   ```markdown
-   ## Project Structure
-   
-   ```
-   .claude/
-   ├── agents/              # 专用 AI agents
-   ├── commands/            # 自定义 slash commands
-   ├── hooks/               # Git hooks
-   ├── skills/              # 可复用 skills
-   ├── CLAUDE.md           # 主配置文件
-   ├── README.md           # 项目说明
-   └── settings.json       # 项目设置
-   ```
-   ```
+**当前问题**：
+- CLAUDE.md 主要是 Linus 角色定义，缺少项目本身的说明
+- 没有说明如何安装和使用这个配置仓库
+- 没有列出项目包含的 Skills、Agents、Commands
 
-2. **缺少 Setup & Installation 章节**
-   - **问题**：没有明确的安装和设置说明
-   - **影响**：新用户不知道如何开始使用
-   - **建议**：添加安装步骤
-   ```markdown
-   ## Setup & Installation
-   
-   ### Prerequisites
-   - Claude Code 2.0+
-   - Git
-   
-   ### Installation
-   1. Clone this repository to your project's `.claude` directory
-   2. Review and customize `CLAUDE.md` for your needs
-   3. Install required skills and agents
-   4. Configure hooks if needed
-   ```
+**建议**：
+```markdown
+## 项目结构
 
-3. **文件过长**
-   - **问题**：CLAUDE.md 文件约 200+ 行，官方建议根文件保持在 150 行以内
-   - **影响**：消耗过多 token，影响性能
-   - **建议**：考虑模块化，将部分内容移到子文件
+```
+.claude/
+├── agents/                    # 专用 AI agents
+│   ├── claude-md-guardian.md  # CLAUDE.md 维护 agent
+│   ├── java-pro.md           # Java 专家 agent
+│   └── rust-pro.md           # Rust 专家 agent
+├── commands/                  # 自定义 slash commands
+│   └── enhance-claude-md/    # CLAUDE.md 增强命令
+├── skills/                    # 可复用 skills（20+ skills）
+│   ├── agent-workflow/       # Agent 执行流程
+│   ├── git-commit/           # Git 提交规范
+│   └── ...
+├── CLAUDE.md                 # 主配置文件
+└── README.md                 # 项目说明
+```
 
-#### 🟡 中等问题
+## 安装与设置
 
-1. **缺少 Common Commands 章节**
-   - **建议**：添加常用命令快速参考
-   ```markdown
-   ## Common Commands
-   
-   ### Development
-   - `cargo build` - 构建项目
-   - `cargo test` - 运行测试
-   - `cargo clippy` - 代码检查
-   
-   ### Git
-   - `git --no-pager log --oneline -10` - 查看最近提交
-   - `git --no-pager diff` - 查看变更
-   ```
+### 前置条件
+- Claude Code 2.0+
+- Git
+- 对应语言的开发环境
 
-2. **缺少 Architecture 章节**
-   - **建议**：添加架构说明（如果项目复杂）
+### 安装步骤
+1. 克隆或复制到项目
+2. 自定义配置
+3. 安装 Git Hooks（可选）
 
-3. **语言混用**
-   - **问题**：CLAUDE.md 中英文混用（角色定义用中文，部分章节用英文）
-   - **建议**：统一使用中文（根据 global-steering.md 的要求）
+## 常用命令
+
+### Claude Code 命令
+- `/enhance-claude-md` - 增强 CLAUDE.md
+- `/invoke rust-pro` - 调用 Rust 专家
+- `/invoke java-pro` - 调用 Java 专家
+
+### Git 命令
+- `git --no-pager log --oneline -10` - 查看提交历史
+- `git commit -F commit_msg.txt` - 提交（Windows 兼容）
+```
+
+#### ⚠️ 文件过长
+
+**当前长度**：约 200 行  
+**建议长度**：< 150 行
+
+**建议**：
+- 将 "Linus 哲学" 移到 `docs/philosophy.md`
+- 将详细的工具使用说明移到 `docs/tools.md`
+- CLAUDE.md 只保留核心内容和快速参考
 
 ---
 
-### 2. Skills 审查
+### 2. README.md 审查
 
-**当前状态**：
-- ✅ 所有 Skills 都使用了 YAML front matter（符合官方规范）
+#### ❌ 内容过于简单
+
+**当前内容**：只有一行 `# .claude`
+
+**问题**：
+- 没有项目介绍
+- 没有特性说明
+- 没有安装指南
+- 没有使用示例
+
+**建议**：参考 `.agent/improvement_plan.md` 中的 README.md 模板
+
+**必须包含的章节**：
+1. 项目介绍
+2. 特性列表
+3. 包含内容（Skills、Agents、Commands）
+4. 快速开始
+5. 使用场景
+6. 文档链接
+7. 贡献指南
+8. 许可证
+
+---
+
+### 3. Skills 审查
+
+#### ✅ 符合官方规范
+
+所有 Skills 都包含：
+- ✅ YAML front matter（name, description）
 - ✅ 使用 `SKILL.md` 作为主文件名
-- ✅ 采用渐进式披露结构（主文件 + 补充文件）
-- ✅ 包含 `name` 和 `description` 字段
+- ✅ 渐进式披露结构（主文件 + 补充文件）
 
-**优秀实践**：
-1. `agent-workflow/SKILL.md` - 结构清晰，包含流程图
-2. `git-commit/SKILL.md` - 格式规范，示例丰富
-3. `rust-code-review/SKILL.md` - 分级清晰，检查清单完整
+#### ⚠️ Description 过长
 
-**问题与建议**：
+**问题 Skills**：
 
-#### 🟡 中等问题
-
-1. **claudeforge-skill 命名不一致**
-   - **问题**：YAML front matter 中 `name: claude-md-enhancer`，但目录名是 `claudeforge-skill`
-   - **建议**：统一命名为 `claude-md-enhancer`
-
-2. **部分 Skills 缺少使用示例**
-   - **问题**：一些 Skills 没有提供具体的使用示例
-   - **建议**：每个 Skill 都应包含 "How to Use" 或 "Example Interactions" 章节
-
-3. **Skills README.md 可以简化**
-   - **问题**：`skills/README.md` 过于详细（约 300+ 行）
-   - **建议**：简化为索引和快速入门，详细内容放在各个 Skill 中
-
-#### 🟢 轻微问题
-
-1. **版本号管理**
-   - **建议**：考虑使用语义化版本号（Semantic Versioning）
-   - **建议**：在 README.md 中维护版本变更日志
-
----
-
-### 3. Agents 审查
-
-**当前状态**：
-- ✅ 所有 Agents 都使用了 YAML front matter
-- ✅ 包含必要的元数据（name, description, model, tools）
-- ✅ 文档结构清晰
-
-**优秀实践**：
-1. `claude-md-guardian.md` - 职责明确，工作流程清晰
-2. `java-pro.md` 和 `rust-pro.md` - 能力描述详细，知识库完整
-
-**问题与建议**：
-
-#### 🟡 中等问题
-
-1. **缺少 Agent 使用示例**
-   - **问题**：Agents 文档中缺少实际调用示例
-   - **建议**：添加 "Example Invocations" 章节
-   ```markdown
-   ## Example Invocations
-   
-   ### Via Chat
+1. **burp-java-plugin**
+   ```yaml
+   description: BurpSuite Java 插件开发完整指南。涵盖项目结构、技术栈、构建系统、插件类型、核心功能、错误处理、测试策略、性能优化、最佳实践。适用于 BurpSuite Java 插件开发的所有场景，包括架构设计、编码实现、测试验证、性能优化。
    ```
-   Hey Claude, invoke rust-pro to review this Rust code
-   ```
-   
-   ### Via Command
-   ```
-   /invoke rust-pro
-   ```
+   **长度**：约 150 字符  
+   **建议**：< 100 字符
+
+   **优化后**：
+   ```yaml
+   description: BurpSuite Java 插件开发完整指南，涵盖项目结构、技术栈、核心功能、测试策略和最佳实践。适用于插件开发的所有场景。
    ```
 
-2. **Agent 之间的协作关系不明确**
-   - **建议**：在 README.md 或 CLAUDE.md 中说明 Agents 之间如何协作
+2. **java-coding-style**
+   ```yaml
+   name: coding-style  # ❌ 与目录名不一致
+   description: Java 8 代码风格规范，包括命名约定（成员变量 m 前缀、静态变量 s 前缀、常量 UPPER_SNAKE_CASE）、格式化标准（4 空格缩进、K&R 大括号风格）、Lambda 表达式和 Stream API 使用指南、异常处理、资源管理。适用于编写或审查 Java 代码、讨论代码规范、进行代码格式化、使用 Java 8 特性时使用。
+   ```
+   **长度**：约 200 字符  
+   **问题**：name 与目录名不一致
+
+   **优化后**：
+   ```yaml
+   name: java-coding-style
+   description: Java 8 代码风格规范，包括命名约定、格式化标准、Lambda 表达式、异常处理和资源管理。适用于编写或审查 Java 代码。
+   ```
+
+#### ⚠️ 命名不一致
+
+**问题**：
+- 目录名：`java-coding-style`
+- YAML name：`coding-style`
+
+**建议**：统一为 `java-coding-style`
 
 ---
 
-### 4. Commands 审查
+### 4. Agents 审查
 
-**当前状态**：
-- ✅ 使用了 YAML front matter
-- ✅ 包含 `allowed-tools` 和 `description`
-- ✅ 采用多阶段模式（Discovery → Analysis → Task）
+#### ✅ 符合官方规范
 
-**优秀实践**：
-1. `enhance-claude-md` - 结构清晰，文档完整
+所有 Agents 都包含：
+- ✅ YAML front matter（name, description, model）
+- ✅ 清晰的能力说明
+- ✅ 详细的知识库
 
-**问题与建议**：
+#### ⚠️ 缺少使用示例
 
-#### 🟡 中等问题
+**问题**：
+- `rust-pro.md` - 有使用示例 ✅
+- `java-pro.md` - 有使用示例 ✅
+- `claude-md-guardian.md` - 有使用示例 ✅
 
-1. **Commands 数量较少**
-   - **建议**：考虑添加更多常用命令，例如：
-     - `/code-review` - 快速代码审查
-     - `/test-coverage` - 测试覆盖率检查
-     - `/security-scan` - 安全扫描
-
-2. **Command 文档可以更简洁**
-   - **问题**：`enhance-claude-md/README.md` 约 400+ 行
-   - **建议**：简化为快速入门 + 常见用法，详细内容链接到 Skill 文档
+**实际上都有了！** 这部分已经做得很好。
 
 ---
 
-### 5. Hooks 审查
+### 5. Commands 审查
 
-**当前状态**：
-- ✅ 包含 `prepare-commit-msg.sh` hook
-- ✅ 功能明确：移除 AI 签名
+#### ✅ 符合官方规范
 
-**问题与建议**：
+`enhance-claude-md` 命令：
+- ✅ 包含 YAML front matter
+- ✅ 使用三阶段结构（Discovery → Analysis → Task）
+- ✅ 有详细的 README.md
 
-#### 🟡 中等问题
+#### ⚠️ 命令数量较少
 
-1. **Hooks 数量较少**
-   - **建议**：考虑添加更多 hooks：
-     - `pre-commit` - 代码格式检查
-     - `commit-msg` - 提交信息验证
-     - `post-commit` - 自动更新文档
+**当前**：只有 1 个命令  
+**建议**：添加更多实用命令
 
-2. **Hook 文档缺失**
-   - **建议**：添加 `hooks/README.md` 说明如何安装和使用 hooks
-
-3. **Windows 兼容性问题**
-   - **问题**：`prepare-commit-msg.sh` 是 bash 脚本，在 Windows 上可能不兼容
-   - **建议**：提供 PowerShell 版本或使用跨平台工具
+**建议添加**：
+1. `/code-review` - 快速代码审查
+2. `/test-coverage` - 测试覆盖率检查
+3. `/security-scan` - 安全扫描
 
 ---
 
-### 6. settings.json 审查
+### 6. Hooks 审查
 
-**当前状态**：
-- ✅ 包含 PostToolUse hook 配置
-- ✅ 功能明确：移除 AI 签名
+#### ⚠️ 缺少 Windows 支持
 
-**问题与建议**：
+**当前**：只有 `prepare-commit-msg.sh`（Bash 脚本）
 
-#### 🟡 中等问题
+**问题**：
+- Windows 用户无法直接使用
+- 需要 Git Bash 或 WSL
 
-1. **配置项较少**
-   - **建议**：考虑添加更多配置：
-     - `model` - 默认模型设置
-     - `temperature` - 温度参数
-     - `maxTokens` - 最大 token 数
-
-2. **缺少配置文档**
-   - **建议**：添加注释或单独的配置文档说明各项配置的作用
+**建议**：
+1. 创建 PowerShell 版本：`prepare-commit-msg.ps1`
+2. 创建跨平台安装脚本：`install.sh` 和 `install.ps1`
+3. 在 README.md 中说明 Windows 用户的安装方法
 
 ---
 
-### 7. 文件组织结构审查
+### 7. 文档结构审查
 
-**当前状态**：
-- ✅ 基本结构清晰
-- ✅ 按功能分类（agents, commands, hooks, skills）
+#### ✅ 模块化设计良好
 
-**问题与建议**：
+```
+.claude/
+├── agents/          ✅ 专用 agents
+├── commands/        ✅ 自定义命令
+├── hooks/           ✅ Git hooks
+├── skills/          ✅ 可复用 skills
+├── CLAUDE.md        ⚠️ 需要完善
+└── README.md        ❌ 内容过于简单
+```
 
-#### 🟡 中等问题
+#### ⚠️ 缺少文档目录
 
-1. **缺少 .kiro 目录**
-   - **问题**：根据 Kiro 的最佳实践，应该使用 `.kiro` 目录而不是 `.claude`
-   - **影响**：可能与 Kiro IDE 的集成不完全兼容
-   - **建议**：考虑重命名或同时支持两种目录结构
+**建议**：创建 `docs/` 目录
 
-2. **缺少 steering 目录**
-   - **问题**：根据 Kiro 文档，应该有 `.kiro/steering/` 目录存放 steering 规则
-   - **建议**：将 `global-steering.md` 移到 `.kiro/steering/` 目录
-
-3. **README.md 内容过于简单**
-   - **问题**：根目录的 `README.md` 只有一行 `# .claude`
-   - **建议**：添加项目介绍、安装说明、使用指南
+```
+docs/
+├── philosophy.md      # Linus 哲学（从 CLAUDE.md 移出）
+├── tools.md          # 工具使用说明
+├── configuration.md  # 配置说明
+└── contributing.md   # 贡献指南
+```
 
 ---
 
-## 📊 评分详情
+### 8. 版本管理审查
 
-| 类别 | 得分 | 满分 | 说明 |
-|------|------|------|------|
-| CLAUDE.md 结构 | 12 | 20 | 缺少项目结构图、安装说明 |
-| Skills 规范性 | 18 | 20 | 符合官方规范，命名有小问题 |
-| Agents 完整性 | 15 | 20 | 文档完整，缺少使用示例 |
-| Commands 实用性 | 12 | 15 | 功能完整，数量较少 |
-| Hooks 完整性 | 8 | 10 | 功能明确，数量较少 |
-| 配置文件 | 6 | 10 | 配置简单，缺少文档 |
-| 文档质量 | 7 | 5 | 文档详细但过于冗长 |
-| **总分** | **78** | **100** | |
+#### ❌ 缺少版本管理
+
+**问题**：
+- 没有 `CHANGELOG.md`
+- 没有统一的版本号
+- 各个 Skills 的版本号不一致
+
+**建议**：
+1. 创建 `CHANGELOG.md`
+2. 在 README.md 中添加版本号
+3. 统一各个 Skills 的版本号格式
+
+---
+
+### 9. 配置文件审查
+
+#### ⚠️ settings.json 缺少注释
+
+**当前**：
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '...'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**问题**：
+- 没有注释说明
+- 用户不知道如何自定义
+
+**建议**：
+1. 使用 JSONC 格式添加注释
+2. 或创建 `docs/configuration.md` 说明配置项
+
+---
+
+### 10. 国际化审查
+
+#### ⚠️ 语言混用
+
+**问题**：
+- 大部分文档使用中文 ✅
+- 部分 Skills 的 description 使用英文（如 `claude-md-enhancer`）
+- Agents 的内容使用英文
+
+**建议**：
+- 保持一致性：要么全中文，要么全英文
+- 或者提供双语版本
+
+**当前策略**：
+- Skills：中文 ✅
+- Agents：英文（因为是技术文档）✅
+- CLAUDE.md：中文 ✅
+
+**结论**：当前策略合理，无需修改
+
+---
+
+## 📊 符合度评估
+
+### Claude 最佳实践符合度
+
+| 类别 | 符合度 | 说明 |
+|------|--------|------|
+| YAML Front Matter | ✅ 100% | 所有 Skills 和 Agents 都有 |
+| 渐进式披露 | ✅ 95% | 大部分 Skills 使用主文件 + 补充文件 |
+| 文件命名 | ⚠️ 90% | 个别命名不一致 |
+| 文档完整性 | ⚠️ 70% | CLAUDE.md 和 README.md 需要完善 |
+| 跨平台支持 | ⚠️ 60% | Hooks 缺少 Windows 支持 |
+| 版本管理 | ❌ 40% | 缺少 CHANGELOG.md |
+
+### 总体符合度：⭐⭐⭐⭐☆ (80%)
 
 ---
 
 ## 🎯 优先级改进建议
 
-### 🔴 高优先级（必须修复）
+### 🔴 高优先级（必须完成）
 
-1. **添加项目结构图到 CLAUDE.md**
-   - 位置：`CLAUDE.md` 顶部
-   - 内容：ASCII 树状图展示目录结构
+1. **完善 CLAUDE.md**
+   - 添加项目结构图
+   - 添加安装与设置章节
+   - 添加常用命令章节
+   - 简化文件长度（< 150 行）
 
-2. **添加 Setup & Installation 章节**
-   - 位置：`CLAUDE.md` 
-   - 内容：安装步骤、前置条件、快速开始
+2. **完善 README.md**
+   - 添加项目介绍
+   - 添加特性列表
+   - 添加安装指南
+   - 添加使用示例
 
-3. **完善 README.md**
-   - 位置：根目录 `README.md`
-   - 内容：项目介绍、功能特性、安装使用
+3. **统一命名**
+   - 修复 `java-coding-style` 的 name 字段
+   - 确保所有 Skills 的目录名和 name 一致
 
-4. **统一 claudeforge-skill 命名**
-   - 操作：重命名目录或修改 YAML front matter
+### 🟡 中优先级（建议完成）
 
-### 🟡 中优先级（建议修复）
+4. **优化 Skills description**
+   - 缩短过长的 description（< 100 字符）
+   - 保持简洁明了
 
-1. **简化 CLAUDE.md 文件长度**
-   - 目标：控制在 150 行以内
-   - 方法：将详细内容移到子文件或 Skills
+5. **添加 Windows 支持**
+   - 创建 PowerShell 版本的 Hooks
+   - 创建跨平台安装脚本
 
-2. **添加 Common Commands 章节**
-   - 位置：`CLAUDE.md`
-   - 内容：常用命令快速参考
-
-3. **为所有 Agents 添加使用示例**
-   - 位置：各 Agent 文件
-   - 内容：实际调用示例
-
-4. **添加更多 Commands**
-   - 建议：`/code-review`, `/test-coverage`, `/security-scan`
-
-5. **提供 Windows 兼容的 Hooks**
-   - 方法：添加 PowerShell 版本或使用跨平台工具
+6. **添加更多 Commands**
+   - `/code-review` - 快速代码审查
+   - `/test-coverage` - 测试覆盖率检查
+   - `/security-scan` - 安全扫描
 
 ### 🟢 低优先级（可选优化）
 
-1. **简化 Skills README.md**
-   - 目标：控制在 100 行以内
-   - 方法：只保留索引和快速入门
+7. **创建 docs/ 目录**
+   - 移动详细文档到 docs/
+   - 保持主文件简洁
 
-2. **添加版本变更日志**
-   - 位置：`CHANGELOG.md`
-   - 内容：记录每个版本的变更
+8. **添加版本管理**
+   - 创建 CHANGELOG.md
+   - 统一版本号格式
 
-3. **添加配置文档**
-   - 位置：`settings.json` 或单独文档
-   - 内容：说明各项配置的作用
-
-4. **考虑迁移到 .kiro 目录结构**
-   - 评估：是否需要与 Kiro IDE 完全兼容
-   - 操作：重命名或同时支持
+9. **添加配置文档**
+   - 说明 settings.json 的配置项
+   - 提供自定义示例
 
 ---
 
-## 📚 参考资料
+## ✅ 已经做得很好的地方
 
-### Claude 官方文档
-- [Claude Code Best Practices](https://www.anthropic.com/developers/engineering/claude-code-best-practices)
-- [Anthropic Skills Repository](https://github.com/anthropics/skills)
-- [Claude Code Documentation](https://github.com/anthropics/claude-code)
+1. **Skills 设计**
+   - ✅ 所有 Skills 都使用 YAML front matter
+   - ✅ 使用渐进式披露结构
+   - ✅ 文档质量高，注释详细
 
-### 最佳实践要点
-1. **CLAUDE.md 文件**：
-   - 保持简洁（<150 行）
-   - 包含项目结构图
-   - 包含安装说明
-   - 使用模块化架构
+2. **Agents 设计**
+   - ✅ 包含详细的能力说明
+   - ✅ 有使用示例
+   - ✅ 与 Skills 协作良好
 
-2. **Skills 规范**：
-   - 使用 YAML front matter
-   - 主文件名为 `SKILL.md`
-   - 采用渐进式披露
-   - 包含使用示例
+3. **Commands 设计**
+   - ✅ 使用三阶段结构
+   - ✅ 有详细的 README.md
 
-3. **Agents 规范**：
-   - 明确职责和能力
-   - 包含调用示例
-   - 说明协作关系
-
-4. **Commands 规范**：
-   - 使用多阶段模式
-   - 明确 allowed-tools
-   - 提供详细文档
+4. **模块化设计**
+   - ✅ 目录结构清晰
+   - ✅ 职责分离明确
 
 ---
 
-## ✅ 下一步行动
+## 📝 具体改进步骤
 
-1. **立即执行**（今天）：
-   - [ ] 添加项目结构图到 CLAUDE.md
-   - [ ] 添加 Setup & Installation 章节
-   - [ ] 完善 README.md
+### 步骤 1：完善 CLAUDE.md（2 小时）
 
-2. **本周完成**：
-   - [ ] 统一 claudeforge-skill 命名
-   - [ ] 简化 CLAUDE.md 文件长度
-   - [ ] 为 Agents 添加使用示例
+1. 添加项目结构图
+2. 添加安装与设置章节
+3. 添加常用命令章节
+4. 将 Linus 哲学移到 `docs/philosophy.md`
+5. 简化文件长度
 
-3. **本月完成**：
-   - [ ] 添加更多 Commands
-   - [ ] 提供 Windows 兼容的 Hooks
-   - [ ] 简化 Skills README.md
+### 步骤 2：完善 README.md（1 小时）
+
+1. 添加项目介绍
+2. 添加特性列表
+3. 添加安装指南
+4. 添加使用示例
+5. 添加文档链接
+
+### 步骤 3：统一命名（30 分钟）
+
+1. 修复 `java-coding-style` 的 name 字段
+2. 检查其他 Skills 的命名一致性
+
+### 步骤 4：优化 Skills description（30 分钟）
+
+1. 缩短 `burp-java-plugin` 的 description
+2. 缩短 `java-coding-style` 的 description
+3. 检查其他 Skills 的 description 长度
+
+### 步骤 5：添加 Windows 支持（2 小时）
+
+1. 创建 `prepare-commit-msg.ps1`
+2. 创建 `install.sh` 和 `install.ps1`
+3. 更新 README.md 说明 Windows 安装方法
 
 ---
 
-**审查完成时间**：2025-12-02
-**审查人**：Kiro AI Assistant
-**下次审查建议**：2025-12-09（一周后）
+## 🔗 参考资料
+
+- [Claude 官方文档](https://docs.anthropic.com/)
+- [Claude Code 最佳实践](https://docs.anthropic.com/claude/docs/claude-code-best-practices)
+- [Agent Skills 规范](https://github.com/anthropics/skills)
+- [Conventional Commits](https://www.conventionalcommits.org/)
+
+---
+
+**审查完成时间**：2025-12-02  
+**审查人**：AI Assistant  
+**下次审查**：2025-12-09
