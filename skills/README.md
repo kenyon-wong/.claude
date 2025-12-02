@@ -9,9 +9,11 @@
 | Skill 目录 | 用途 | 适用范围 | 版本 |
 |-----------|------|---------|------|
 | `claude-md-enhancer/` | CLAUDE.md 文件生成与增强 | 所有项目 | v1.0.0 |
+| `rust-standards/` | Rust 代码标准和规范 | 所有 Rust 项目 | v1.0.0 |
 | `rust-code-review/` | Rust 代码审查标准 | 所有 Rust 项目 | v2.0.0 |
 | `report-templates/` | 代码审查报告模板 | 所有代码审查任务 | v2.0.0 |
 | `rust-testing/` | Rust 测试验证流程 | 所有 Rust 项目 | v2.0.0 |
+| `development-workflow/` | Rust 项目开发流程 | 所有 Rust 项目 | v1.0.0 |
 | `git-commit/` | Git 提交规范 | 所有项目 | v2.0.0 |
 | `agent-workflow/` | AI Agent 执行流程 | 所有 AI 自动化任务 | v2.0.0 |
 | `progress-tracking/` | 进度追踪文件模板 | 所有 AI 自动化任务 | v2.0.0 |
