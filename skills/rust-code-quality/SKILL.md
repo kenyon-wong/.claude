@@ -5,7 +5,7 @@ description: 定义 Rust 代码质量标准，包括 Clippy 规则配置、快�
 
 # Rust 代码质量规范
 
-本技能定义 CodeQL Scanner 项目的 Rust 代码质量标准和最佳实践。
+本技能定义 Rust 项目的代码质量标准和最佳实践。
 
 ## 快速修复工具
 

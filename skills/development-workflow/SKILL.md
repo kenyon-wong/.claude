@@ -1,11 +1,11 @@
 ---
 name: development-workflow
-description: 提供 CodeQL Scanner 项目的开发流程、构建命令、测试策略和代码质量检查标准。当需要构建项目、运行测试、执行代码质量检查或设置预提交钩子时使用此技能。
+description: 提供 Rust 项目的开发流程、构建命令、测试策略和代码质量检查标准。当需要构建项目、运行测试、执行代码质量检查或设置预提交钩子时使用此技能。
 ---
 
 # 开发流程与命令
 
-本技能提供 CodeQL Scanner 项目的完整开发工作流程指导，包括构建、测试、代码质量检查和预提交设置。
+本技能提供 Rust 项目的完整开发工作流程指导，包括构建、测试、代码质量检查和预提交设置。
 
 ## 构建和测试命令
 
@@ -17,8 +17,8 @@ cargo build
 # 发布构建（优化）
 cargo build --release
 
-# 项目特定编译命令
-cargo build -p codeql-scanner-cli
+# 项目特定编译命令（示例）
+cargo build -p {your-project-cli}
 ```
 
 ### 测试命令
@@ -26,10 +26,10 @@ cargo build -p codeql-scanner-cli
 # 运行所有测试
 cargo test --workspace
 
-# 运行特定 crate 测试
-cargo test -p codeql-scanner-core
-cargo test -p codeql-scanner-utils
-cargo test -p codeql-scanner-cli
+# 运行特定 crate 测试（示例）
+cargo test -p {your-project-core}
+cargo test -p {your-project-utils}
+cargo test -p {your-project-cli}
 
 # 带输出的测试
 cargo test -- --nocapture
@@ -75,10 +75,10 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 # 自动修复 Clippy 问题
 cargo clippy --fix --workspace --allow-dirty
 
-# 分别修复各个 crate
-cargo fix --lib -p codeql-scanner-utils --allow-dirty
-cargo fix --lib -p codeql-scanner-core --allow-dirty
-cargo fix --bin "codeql-scanner" --allow-dirty
+# 分别修复各个 crate（示例）
+cargo fix --lib -p {your-project-utils} --allow-dirty
+cargo fix --lib -p {your-project-core} --allow-dirty
+cargo fix --bin "{your-project-binary}" --allow-dirty
 ```
 
 ## 项目特定质量检查
@@ -151,7 +151,7 @@ async fn test_async_function() {
 
 ### 开发环境变量
 - `RUST_LOG`: 控制日志级别（如 `debug`, `info`）
-- `CODEQL_CLI_PATH`: 覆盖 CodeQL CLI 位置
+- 其他项目特定环境变量（根据需要配置）
 - `SKIP_PERFORMANCE_TESTS`: 跳过性能基准测试
 
 ### 测试配置
